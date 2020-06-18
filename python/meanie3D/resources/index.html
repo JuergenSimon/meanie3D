@@ -1,568 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>D3 Page Template</title>
-    <!--<script src="d3.js" charset="utf-8"></script>-->
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js" charset="utf-8"></script>
-    <script src="meanie3d.js" charset="utf-8"/>
-    </script>
-    <
-    style >
-    #
-    menu
-    {
-        color: #
-        555555;
-        margin - left
-    :
-        1e
-        m;
-        font - family
-    :
-        sans - serif;
-        font - size
-    :
-        smaller;
-        float: left;
-        width: 15 %;
-        overflow - x
-    :
-        auto;
-        overflow - y
-    :
-        auto;
-    }
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Page Template</title>
+		<!--<script src="d3.js" charset="utf-8"></script>-->
+		<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js" charset="utf-8"></script>
+		<script src="meanie3d.js" charset="utf-8"/></script>
+		<style>
+		    #menu {
+                color: #555555;
+		        margin-left:1em;
+                font-family: sans-serif;
+                font-size: smaller;
+		        float: left;
+		        width: 15%;
+		        overflow-x: auto;
+		        overflow-y: auto;
+		    }
 
-    #
-    menu
-    #
-    top
-    {
-        float: top;
-        padding - bottom
-    :
-        10
-        px;
-    }
-
-    #
-    menu
-    #
-    top
-    #
-    search - box
-    {
-    }
-
-    #
-    menu
-    #
-    top
-    #
-    trackinfo
-    {
-        margin - top
-    :
-        1e
-        m;
-        font - size
-    :
-        large;
-        font - family
-    :
-        sans - serif;
-        border: 2
-        pt
-        solid
-        red;
-        float: top;
-    }
-
-    #
-    menu
-    #
-    barchart
-    {
-        text - align
-    :
-        right;
-    }
-
-    div.bar.left
-    {
-        display: inline;
-        text - align
-    :
-        left;
-        float:left;
-        padding: 0
-        px
-        0
-        px
-        0
-        px
-        5
-        px;
-    }
-
-    div.bar.right
-    {
-        display: inline;
-        text - align
-    :
-        right;
-        float:right;
-        padding: 0
-        px
-        5
-        px
-        0
-        px
-        5
-        px;
-    }
-
-    #
-    menu
-    #
-    barchart - legend
-    {
-        padding - bottom
-    :
-        1e
-        m;
-    }
-
-    #
-    graph
-    {
-        width: 80 %;
-        float: right;
-        overflow: auto;
-    }
-
-    text
-    {
-        font: 10
-        px
-        sans - serif;
-    }
-
-    .bar
-    {
-        font - weight
-    :
-        bold;
-        height: 22
-        px;
-        margin: 2
-        px;
-        padding: 0.3e
-        m
-        0
-        px
-        0
-        px
-        0
-        px;
-        background - color
-    : #DDDDDD;
-        vertical - align
-    :
-        bottom;
-    }
-
-    .selected
-    {
-        border: 2
-        pt
-        solid
-        red;
-    }
-
-    #
-    node - overlay
-    {
-        position: absolute;
-        left: 300
-        px;
-        top: 100
-        px;
-        border: 1
-        pt
-        solid
-        black;
-        color: white;
-        font - family
-    :
-        sans - serif;
-        font - weight
-    :
-        bold;
-        font - size
-    :
-        smaller;
-        display: none;
-        padding: 0
-        px
-        10
-        px
-        10
-        px
-        10
-        px;
-    }
-
-    #
-    top
-    ul
-    {
-        list - style - type
-    :
-        circle;
-        padding - left
-    :
-        0
-        px;
-    }
-
-    #
-    legend
-    ul
-    {
-        list - style - type
-    :
-        circle;
-        padding - left
-    :
-        0
-        px;
-    }
-
-    #
-    node - overlay
-    ul
-    {
-        list - style - type
-    :
-        none;
-        display: inline;
-    }
-
-    #
-    loading
-    {
-        position:absolute;
-        left:0
-        px;
-        top:0
-        px;
-        width: 100 %;
-        display: none;
-        background - color
-    :
-        gray;
-        opacity: 0.8;
-        font - size
-    :
-        large;
-        font - family
-    :
-        sans - serif;
-        font - weight
-    :
-        bold;
-        color: white;
-        text - align
-    :
-        center;
-        z - index
-    :
-        1000;
-    }
-
-    #
-    pondering
-    {
-        position:absolute;
-        left:0
-        px;
-        top:0
-        px;
-        width: 100 %;
-        display: none;
-        background - color
-    :
-        gray;
-        opacity: 0.5;
-        text - align
-    :
-        center;
-        z - index
-    :
-        1000;
-    }
-
-    </
-    style >
-    < / head >
-    < body >
-    < div
-    id = "loading" >
-            < p > Loading
-    track
-    dictionary.This
-    may
-    take
-    some
-    time... < / p >
-    < p > < img
-    src = "ajax-loader.gif"
-    id = "loading-indicator" / > < / p >
-            < / div >
-            < div
-    id = "pondering" > < / div >
-            <!-- navigation -->
-            < div
-    id = "menu" >
-            < div
-    id = "top" >
-            < h3
-    class
-    = "title" > Meanie3D
-    Track
-    Graph < / h3 >
-    < div
-    id = "search-box" >
-            < form
-    method = "post" >
-            Enter
-    id
-    of
-    a
-    track
-    or
-    uuid
-    of
-    a
-    cluster:
-            <
-    input
-    type = "text"
-    id = "_id"
-    value = ""
-    placeholder = "id"
-    size = "5" / > or
-            < input
-    type = "text"
-    id = "_uuid"
-    value = ""
-    placeholder = "uuid"
-    size = "5" / >
-            < input
-    type = "submit"
-    value = "go"
-    onclick = "return M3D.search(this.form._id.value, this.form._uuid.value);" >
-            < / form >
-            < / div >
-            < div
-    id = "barchart-legend" >
-            < h4 > How
-    to
-    read
-    bars < / h4 >
-    The
-    length
-    of
-    the
-    bar
-    is
-    proportional
-    to
-    track
-    length.The
-    labels
-    on
-    the
-    left
-    signify
-    the
-    length.The
-    labels
-    on
-    the
-    right
-    the
-    number
-    of
-    tracks
-    of
-    that
-    length.Click
-    on
-    a
-    bar
-    to
-    restrict
-    the
-    graph
-    to
-    tracks
-    of
-    that
-    length(and
-    connected
-    ).
-    <
-    h4 > Actions < / h4 >
-    < ul >
-    < li > Drag
-    nodes
-    around < / li >
-    < li > Double - click
-    on
-    a
-    node
-    to
-    restrict
-    the
-    graph
-    the
-    node
-    's track</li>
-    < li > Hover
-    over
-    a
-    node
-    to
-    get
-    more
-    info < / li >
-    < / ul >
-    < h4 > How
-    to
-    read
-    nodes < / h4 >
-    Nodes
-    are
-    colored
-    by
-    track
-    id.Older
-    nodes
-    are
-    lighter in color,
-            newer
-    nodes
-    are
-    darker.The
-    number in the
-    circle
-    is
-    the
-    ID
-    of
-    the
-    track(not
-    the
-    UUID
-    ). If
-    you
-    selected
-    an
-    id, nodes
-    of
-    that
-    id
-    have
-    a
-    thick, red
-    boundary.
-    < / div >
-    < div
-    id = "barchart" > < / div >
-            < / div >
-            < div
-    id = "legend" >
-            < h4 > How
-    to
-    read
-    lines < / h4 >
-    Nodes
-    are
-    connected
-    with lines.The lines
-    have
-    arrows
-    that
-    point
-    in the
-    direction
-    of
-    time.There
-    are
-    three
-    line
-    colors:
-            <
-    ul >
-    < li > < span
-    style = "color:gray" > Gray < / span > means
-    continuation < / li >
-    < li > < span
-    style = "color:blue" > Blue < / span > signifies
-    a
-    merge < / li >
-    < li > < span
-    style = "color:red" > Red < / span > symbolises
-    a
-    split < / li >
-    < / ul >
-    < / div >
-    < / div >
-
-    <!-- tracking graph -->
-    < div
-    id = "graph" > < / div >
-
-            <!-- node overlay -->
-            < div
-    id = "node-overlay" >
-            < ul
-    id = "node-data" > < ul >
-            < / div >
-
-            < script
-    type = "text/javascript" >
-    var viewport = {
-        width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
-        height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
-    }
-
-    var filterById = M3D.getUrlParameter('id');
-    var filterByTrackLength = M3D.getUrlParameter('tracklength');
-    var graph;
-    M3D.showLoading();
-    // Give this a little time to allow the loading spinner to start animating.
-    setTimeout(function () {
-        d3.json("track-dictionary.json", function (error, dictionary) {
-            M3D.hideLoading();
-            if (error) throw error;
-            M3D.graph = new M3D.TrackingGraph(dictionary);
-            if (filterById) {
-                M3D.graph.setId(filterById);
+            #menu #top {
+                float: top;
+                padding-bottom: 10px;
             }
-            if (filterByTrackLength) {
-                M3D.graph.setTrackLength(filterByTrackLength);
+
+            #menu #top #search-box {
             }
-            M3D.addBarchartMenu(M3D.graph);
-            M3D.showTrackingGraph(M3D.graph);
-        });
-    }, 500);
+
+            #menu #top #trackinfo {
+		        margin-top: 1em;
+		        font-size: large;
+		        font-family: sans-serif;
+		        border: 2pt solid red;
+		        float: top;
+		    }
+
+			#menu #barchart {
+				text-align: right;
+			}
+
+			div.bar .left {
+				display: inline;
+				text-align: left;
+				float:left;
+				padding: 0px 0px 0px 5px;
+			}
+
+			div.bar .right {
+				display: inline;
+				text-align: right;
+				float:right;
+				padding: 0px 5px 0px 5px;
+			}
+
+            #menu #barchart-legend {
+                padding-bottom: 1em;
+            }
+
+		    #graph {
+		        width: 80%;
+		        float: right;
+		        overflow: auto;
+		    }
+
+			text {
+                 font: 10px sans-serif;
+            }
+
+            .bar {
+                font-weight: bold;
+                height: 22px;
+                margin: 2px;
+				padding: 0.3em 0px 0px 0px;
+                background-color: #DDDDDD;
+				vertical-align: bottom;
+            }
+
+            .selected {
+                border: 2pt solid red;
+            }
+
+            #node-overlay {
+                position: absolute;
+                left: 300px;
+                top: 100px;
+                border: 1pt solid black;
+                color: white;
+                font-family: sans-serif;
+                font-weight: bold;
+                font-size: smaller;
+                display: none;
+                padding: 0px 10px 10px 10px;
+            }
+
+			#top ul {
+                list-style-type:circle;
+				padding-left:0px;
+			}
+
+			#legend ul  {
+                list-style-type:circle;
+				padding-left:0px;
+			}
+
+            #node-overlay ul {
+                list-style-type:none;
+                display: inline;
+            }
+
+            #loading {
+				position:absolute;
+				left:0px;
+				top:0px;
+				width: 100%;
+            	display: none;
+				background-color: gray;
+				opacity: 0.8;
+				font-size: large;
+				font-family: sans-serif;
+				font-weight: bold;
+				color: white;
+				text-align: center;
+				z-index: 1000;
+            }
+
+		    #pondering {
+				position:absolute;
+				left:0px;
+				top:0px;
+				width: 100%;
+            	display: none;
+				background-color: gray;
+				opacity: 0.5;
+				text-align: center;
+				z-index: 1000;
+            }
+
+        </style>
+    </head>
+    <body>
+	    <div id="loading">
+	    	<p>Loading track dictionary. This may take some time ...</p>
+	    	<p><img src="ajax-loader.gif" id="loading-indicator"/></p>
+	    </div>
+		<div id="pondering"></div>
+        <!-- navigation -->
+        <div id="menu">
+            <div id="top">
+                <h3 class="title">Meanie3D Track Graph</h3>
+                <div id="search-box">
+                    <form method="post">
+                        Enter id of a track or uuid of a cluster:
+                        <input type="text" id="_id" value="" placeholder="id" size="5"/> or
+                        <input type="text" id="_uuid" value="" placeholder="uuid" size="5"/>
+                        <input type="submit" value="go" onclick="return M3D.search(this.form._id.value, this.form._uuid.value);">
+                    </form>
+                </div>
+                <div id="barchart-legend">
+                    <h4>How to read bars</h4>
+                    The length of the bar is proportional to track length. The labels
+					on the left signify the length. The labels on the right the number
+					of tracks of that length. Click on a bar to restrict the graph to
+					tracks of that length (and connected).
+	                <h4>Actions</h4>
+	                <ul>
+	                    <li>Drag nodes around</li>
+	                    <li>Double-click on a node to restrict the graph the node's track</li>
+	                    <li>Hover over a node to get more info</li>
+	                 </ul>
+	                <h4>How to read nodes</h4>
+	                Nodes are colored by track id. Older nodes are lighter in color,
+	                newer nodes are darker. The number in the circle is the ID of the
+					track (not the UUID). If you selected an id, nodes of that id
+					have a thick, red boundary.
+                </div>
+                <div id="barchart"></div>
+            </div>
+            <div id="legend">
+                <h4>How to read lines</h4>
+				Nodes are connected with lines. The lines have arrows that point
+				in the direction of time. There are three line colors:
+				<ul>
+					<li><span style="color:gray">Gray</span> means continuation</li>
+					<li><span style="color:blue">Blue</span> signifies a merge</li>
+					<li><span style="color:red">Red</span> symbolises a split</li>
+				</ul>
+            </div>
+        </div>
+
+        <!-- tracking graph -->
+        <div id="graph"></div>
+
+        <!-- node overlay -->
+        <div id="node-overlay">
+            <ul id="node-data"><ul>
+        </div>
+
+		<script type="text/javascript">
+			var viewport = {
+				width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
+				height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+			}
+
+			var filterById = M3D.getUrlParameter('id');
+			var filterByTrackLength = M3D.getUrlParameter('tracklength');
+			var graph;
+			M3D.showLoading();
+			// Give this a little time to allow the loading spinner to start animating.
+			setTimeout(function() {
+				d3.json("track-dictionary.json", function(error, dictionary) {
+					M3D.hideLoading();
+					if (error) throw error;
+					M3D.graph = new M3D.TrackingGraph(dictionary);
+					if (filterById) {
+						M3D.graph.setId(filterById);
+					}
+					if (filterByTrackLength) {
+						M3D.graph.setTrackLength(filterByTrackLength);
+					}
+	                M3D.addBarchartMenu(M3D.graph);
+					M3D.showTrackingGraph(M3D.graph);
+	            });
+			}, 500);
 
 
-    </script>
-    </body>
+		</script>
+	</body>
 </html>

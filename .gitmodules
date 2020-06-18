@@ -4,4 +4,4 @@
 	url = http://simon:mutter20panir@git.meteo.uni-bonn.de/git/numericalrecipes
 [submodule "radolan"]
 	path = radolan
-	url = http://git.meteo.uni-bonn.de/git/radolan
+	url = https://github.com/meteo-ubonn/radolan.git

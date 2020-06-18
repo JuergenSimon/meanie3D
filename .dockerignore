@@ -1,0 +1,7 @@
+.idea
+.vscode
+CMakeFiles
+cmake-build-debug
+Makefile.docker
+cmake_install.cmake
+html
