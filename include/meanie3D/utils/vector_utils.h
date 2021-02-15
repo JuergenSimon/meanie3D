@@ -394,7 +394,18 @@ namespace m3D {
                 vector<T> mode;
                 for (tokenizer::iterator tok_iter = tokens.begin(); tok_iter != tokens.end(); ++tok_iter) {
                     std::string token = *tok_iter;
-                    result.push_back(boost::lexical_cast<T>(token));
+                    T value;
+                    try {
+                        value = boost::lexical_cast<T>(token);
+                        result.push_back(value);
+                    }
+                    catch (std::exception &e)
+                    {
+                        std::cerr << "Could not convert token " << token << std::endl;
+                        // NOTE: this is a workaround for the problem described in
+                        // https: //stackoverflow.com/questions/62553744/why-does-boostlexical-cast-throw-an-exception-even-though-it-converted-the-val
+                        result.push_back(value);
+                    }
                 }
 
                 return result;

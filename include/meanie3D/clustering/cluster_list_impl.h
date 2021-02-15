@@ -975,6 +975,7 @@ namespace m3D {
 
             Point<T> *current_point = fs->points[i];
             // skip zeroshift and non-original points
+            // TODO: revisit the idea of skipping non-original points
             if (vector_norm(fs->spatial_component(current_point->shift)) == 0 || !current_point->isOriginalPoint)
                 continue;
             // Find the predecessor through gridded shift
@@ -1175,10 +1176,8 @@ namespace m3D {
             }
         }
 
-        // Finally remove all points from all clusters, that were
-        // not part of the original data set, as well as make their
-        // modes the arithmetic mean of the remaining points
-
+        // Finally remove all points from all clusters that were not part of the original 
+        // data set. Make their modes the arithmetic mean of the remaining points.
         if (show_progress) {
             cout << endl << "Erasing non-original points ...";
             start_timer();

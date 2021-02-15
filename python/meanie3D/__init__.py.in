@@ -8,23 +8,23 @@ import os.path
 import sys
 
 def getVersion():
-    '''
+    """
     :return:meanie3D package version
-    '''
+    """
     from . import __version__
     return __version__
 
 def getHome():
-    '''
+    """
     meanie3D package location
     :return:
-    '''
+    """
     return os.path.abspath(os.path.dirname(__file__))
 
 def appendSystemPythonPath():
-    '''
+    """
     Returns the system's python path to import outside modules.
-    '''
+    """
     system_python_path = "${SYSTEM_PYTHON_PATH}".strip()
     paths = system_python_path.split(':')
     for path in paths:

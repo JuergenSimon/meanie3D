@@ -59,30 +59,30 @@
 #define GRID_ROUNDING_METHOD_NONE 0
 
 // ---------------------------------------------------- //
-// Debugging Flags(stdout)
+// Debugging Flags (stdout)
 // ---------------------------------------------------- //
 
-#define DEBUG_GRAPH_AGGREGATION 0
-#define DEBUG_CI_SCORE 0
+// #define DEBUG_GRAPH_AGGREGATION 0
+// #define WRITE_CI_SCORE 0
 
 // ---------------------------------------------------- //
 // Debugging Flags (files)
 // ---------------------------------------------------- //
 
-// Write the feature-space out in .vtk file format
-#define WRITE_FEATURESPACE 0
+// // Write the feature-space out in .vtk file format
+// #define WRITE_FEATURESPACE 0
 
-// Write out modes found by the iterations or graph approach
-#define WRITE_MODES 0
+// // Write out modes found by the iterations or graph approach
+// #define WRITE_MODES 0
 
-// Write out a VTK file that contains 1 and 0 for
-// all points. 1 means, that the point was marked
-// as 'off limits' in the original feature-space
-// (one of the variables outside of valid_range).
-#define WRITE_OFF_LIMITS_MASK 0
+// // Write out a VTK file that contains 1 and 0 for
+// // all points. 1 means, that the point was marked
+// // as 'off limits' in the original feature-space
+// // (one of the variables outside of valid_range).
+// #define WRITE_OFF_LIMITS_MASK 0
 
-// Write out the result of the initial clustering
-// step into separate files.
-#define WRITE_ZEROSHIFT_CLUSTERS 0
+// // Write out the result of the initial clustering
+// // step into separate files.
+// #define WRITE_ZEROSHIFT_CLUSTERS 0
 
 #endif

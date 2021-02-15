@@ -53,9 +53,7 @@ namespace m3D {
         calculate_weight_function(FeatureSpace <T> *fs) {
             for (size_t i = 0; i < fs->points.size(); i++) {
                 Point<T> *p = fs->points[i];
-
                 T saliency = this->compute_weight(p);
-
                 m_weight->set(p->gridpoint, saliency);
             }
         };
@@ -85,15 +83,11 @@ namespace m3D {
          */
         T compute_weight(Point <T> *p) {
             T sum = 0.0;
-
             size_t num_vars = p->values.size() - p->coordinate.size();
-
             for (size_t var_index = 0; var_index < num_vars; var_index++) {
                 T value = p->values[p->coordinate.size() + var_index];
-
                 sum += pow(boost::numeric_cast<double>(value), 10.0);
             }
-
             return sum;
         }
 

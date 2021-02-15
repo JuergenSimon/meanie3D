@@ -1,10 +1,8 @@
-__all__ = ["clusters", "tracks","utils"]
-__have_visit = None
-__visitPath__ = None
-__visitImportPath__ = None
-
 import sys
 import meanie3D.app.utils
+
+__all__ = ["clusters", "tracks", "utils"]
+__have_visit = None
 
 # Import visit package
 __visitPath__, __visitImportPath__ = meanie3D.app.utils.findVisitPaths()

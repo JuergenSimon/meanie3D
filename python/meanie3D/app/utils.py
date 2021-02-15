@@ -26,10 +26,10 @@ import glob
 import json
 import os
 import os.path
-import pdb
 import shutil
 import sys
-import external
+
+from . import external
 
 
 def load_configuration(filename):
@@ -38,7 +38,7 @@ def load_configuration(filename):
     :param filename:
     :return:
     """
-    json_data=open(filename)
+    json_data = open(filename)
     data = json.load(json_data)
     json_data.close()
     return data
@@ -51,18 +51,18 @@ def number_of_netcdf_files(source_dir):
     :return:
     """
     netcdf_pattern = source_dir + "/*.nc"
-    netcdf_list=sorted(glob.glob(netcdf_pattern))
+    netcdf_list = sorted(glob.glob(netcdf_pattern))
     return len(netcdf_list)
 
 
-def numbered_filename(filename,index):
+def numbered_filename(filename, index):
     """
     :param filename:
     :param index:
     :return:
     """
     basename = os.path.basename(filename)
-    return os.path.splitext(basename)[0]+"-"+str(index)+".nc"
+    return os.path.splitext(basename)[0] + "-" + str(index) + ".nc"
 
 
 def create_ouput_directories(base_path):
@@ -75,13 +75,13 @@ def create_ouput_directories(base_path):
         os.makedirs(base_path)
 
     # logs
-    log_dir = base_path+"/log"
+    log_dir = base_path + "/log"
     if os.path.exists(log_dir):
         shutil.rmtree(log_dir)
     os.makedirs(log_dir)
 
     # netcdf results
-    netcdf_dir = base_path+"/netcdf"
+    netcdf_dir = base_path + "/netcdf"
     if os.path.exists(netcdf_dir):
         shutil.rmtree(netcdf_dir)
     os.makedirs(netcdf_dir)
@@ -97,198 +97,191 @@ def askYesNo(prompt):
     """
     result = None
     msg = "%s [y|n]:" % prompt
-    while not result in ('y','Y','n','N'):
+    while result not in ('y', 'Y', 'n', 'N'):
         result = raw_input(msg)
-    return result in ('y','Y')
+    return result in ('y', 'Y')
 
 
 def removeOutputDirectories(config):
     """
     :param config:
-    :param scales:
     :return:
     """
     dirsExist = False
     output_dir = config['output_dir']
     if config['scales']:
         for scale in config['scales']:
-            dir = output_dir + "/scale"+str(scale)
-            dirsExist = (dirsExist or os.path.exists(dir))
+            _dir = output_dir + "/scale" + str(scale)
+            dirsExist = (dirsExist or os.path.exists(_dir))
     else:
-        dir = output_dir + "/clustering"
-        dirsExist = os.path.exists(dir)
+        _dir = output_dir + "/clustering"
+        dirsExist = os.path.exists(_dir)
 
     if dirsExist:
         if askYesNo("Results exist from previous runs. They will be removed. Do you wish to proceed?"):
             if config['scales']:
                 for scale in config['scales']:
-                    dir = output_dir + "/scale"+str(scale)
-                    external.execute_command("rm","-rf %s" % os.path.abspath(dir))
+                    _dir = output_dir + "/scale" + str(scale)
+                    external.execute_command("rm", "-rf %s" % os.path.abspath(_dir))
             else:
-                dir = output_dir + "/clustering"
-                external.execute_command("rm","-rf %s" % os.path.abspath(dir))
+                _dir = output_dir + "/clustering"
+                external.execute_command("rm", "-rf %s" % os.path.abspath(_dir))
         else:
             return False
     return True
 
 
-def getSafe(dict,key):
+def getSafe(dictionary, key):
     """
     Tests if the dictionary has the given key. If so, it retrieves the value and returns it. If not, returns None.
-    :param dict:
+    :param dictionary:
     :param key:
     :return:
     """
-    if key in dict and dict[key]:
-        return dict[key]
+    if key in dictionary and dictionary[key]:
+        return dictionary[key]
     else:
         return None
 
 
 def capitalize(line):
     """
-    Courtesy of http://stackoverflow.com/questions/1549641/how-to-capitalize-the-first-letter-of-each-word-in-a-string-python
+    Courtesy of
+    http://stackoverflow.com/questions/1549641/how-to-capitalize-the-first-letter-of-each-word-in-a-string-python
     :param line:
     :return:
     """
     return ' '.join(s[0].upper() + s[1:] for s in line.split(' '))
 
 
-def setValueForKeyPath(object,keypath,value):
+def setValueForKeyPath(obj, keypath, value):
     """
     Sets the given object values along a keypath separated by periods. Example: axes2D.yAxis.title.units.
-    :param object:
+    :param obj:
     :param keypath:
     :param value:
     :return:
     """
     keys = keypath.split(".")
     if len(keys) > 1:
-        if type(object) is dict:
-            nextObject = object[keys[0]]
+        if type(obj) is dict:
+            nextObject = obj[keys[0]]
         else:
-            nextObject = getattr(object,keys[0])
+            nextObject = getattr(obj, keys[0])
         keys.pop(0)
         remainingPath = ".".join(keys)
-        setValueForKeyPath(nextObject,remainingPath,value)
+        setValueForKeyPath(nextObject, remainingPath, value)
     else:
         # The specific enumerated values in Visit are configured
         # as strings in configuration dictionary, but are int values
         # in visualisation objects. Try to set an enumerated value when hitting
         # this combination
-        if type(value) is str and type(getattr(object,keypath)) is int:
-            print "Attempting to resolve constant"
-            value = getattr(object,value)
+        if type(value) is str and type(getattr(obj, keypath)) is int:
+            print("Attempting to resolve constant")
+            value = getattr(obj, value)
 
-        if type(object) is dict:
-            object[keypath] = value
+        if type(obj) is dict:
+            obj[keypath] = value
         else:
             try:
-                setattr(object,keypath,value)
+                setattr(obj, keypath, value)
             except:
                 try:
                     # try a setter
-                    setter = getattr(object,'Set'+capitalize(keypath))
+                    setter = getattr(obj, 'Set' + capitalize(keypath))
                     if setter:
                         setter(value)
                 except:
-                    sys.stderr.write("Can't set value %s for key '%s' on object" % (str(value),keypath))
+                    sys.stderr.write("Can't set value %s for key '%s' on object" % (str(value), keypath))
                     raise
 
     return
 
 
-def getValueForKeyPath(object,keypath):
+def getValueForKeyPath(obj, key_path):
     """
     Gets the given object values along a keypath separated by periods. Example: axes2D.yAxis.title.units
-    :param object:
-    :param keypath:
+    :param obj:
+    :param key_path:
     :return:
     """
-    keys = keypath.split(".")
+    keys = key_path.split(".")
     if len(keys) > 1:
-        if object is None:
+        if obj is None:
             return None
-        elif type(object) is dict:
-            nextObject = getSafe(object,keys[0])
+        elif type(obj) is dict:
+            nextObject = getSafe(obj, keys[0])
         else:
-            nextObject = getattr(object,keys[0])
+            nextObject = getattr(obj, keys[0])
         keys.pop(0)
         remainingPath = ".".join(keys)
-        return getValueForKeyPath(nextObject,remainingPath)
+        return getValueForKeyPath(nextObject, remainingPath)
     else:
         # The specific enumerated values in Visit are configured
         # as strings in configuration dictionary, but are int values
         # in visualisation objects. Try to set an enumerated value when hitting
         # this combination
-        value = None
-        if object is None:
+        if obj is None:
             return None
-        elif type(object) is dict:
-            value = getSafe(object,keypath)
+        elif type(obj) is dict:
+            value = getSafe(obj, key_path)
         else:
-            value = getattr(object,keypath)
+            value = getattr(obj, key_path)
         return value
 
 
-def setValuesFromDictionary(object,dictionary):
+def setValuesFromDictionary(obj, dictionary):
     """
     Sets the values from the dictionary on the given object
-    :param object:
+    :param obj:
     :param dictionary:
     :return:
     """
-    for key,value in dictionary.items():
-        setValueForKeyPath(object,key,value)
+    for key, value in dictionary.items():
+        setValueForKeyPath(obj, key, value)
     return
 
 
-def find(path,filename,requiredComponent=None):
+def find(path, filename, required_component=None):
     """
     Recursive directory search
     :param path:
     :param filename:
-    :param requiredComponent: must have one component in the path to the result that matches this
+    :param required_component: must have one component in the path to the result that matches this
     :return: fully qualified path to result or None
     """
-    try:
-        if os.path.exists(path) and os.path.isdir(path):
-            files = os.listdir(path)
-            for file_ in files:
-                if file_ == filename:
-                    if requiredComponent:
-                        components = path.split(os.path.sep)
-                        if not requiredComponent in components:
-                            continue
-                        return os.path.abspath(path + os.sep + filename)
-                    else:
-                        return os.path.abspath(path + os.sep + filename)
-
-        for f in files:
-            full_path = os.path.abspath(path + os.sep + f)
-            if os.path.isdir(full_path):
-                result = find(full_path, filename, requiredComponent)
-                if result:
-                    return result
-    except OSError as err:
-        print err
-
+    for root, dirs, files in os.walk(path, topdown=True):
+        all_files = []
+        for foo in files:
+            all_files.append(foo)
+        for bar in dirs:
+            all_files.append(bar)
+        for _file in all_files:
+            if _file == filename:
+                complete_path = os.path.abspath(root + os.path.sep + _file)
+                if required_component:
+                    components = complete_path.split(os.path.sep)
+                    if required_component not in components:
+                        continue
+                    return complete_path
+                else:
+                    return complete_path
     return None
 
 
-def find_in_paths(paths,filename,requiredComponent=None):
+def find_in_paths(paths, filename, required_component=None):
     """
     Recursive directory search
     :rtype : string
     :param paths:
     :param filename:
-    :param requiredComponent:
+    :param required_component:
     :return:
     """
     result = None
     for path in paths:
-        result = find(path,filename,requiredComponent)
-        if result != None:
+        result = find(path, filename, required_component)
+        if result is not None:
             break
     return result
 
@@ -301,15 +294,15 @@ def findVisitPaths():
     visitPath = None
     visitImportPath = None
     try:
-        cmdMap = external.locateCommands(["visit"],True)
+        cmdMap = external.locateCommands(["visit"], True)
         if cmdMap['visit']:
             visitPath = os.path.abspath(os.path.join(cmdMap['visit'], os.pardir + os.sep + os.pardir))
             if visitPath:
-                visitImportPath = find(visitPath,"site-packages")
+                visitImportPath = find(visitPath, "site-packages")
     except:
         return None, None
 
-    return visitPath,visitImportPath
+    return visitPath, visitImportPath
 
 
 def strToBool(s):
@@ -331,4 +324,3 @@ def strToBool(s):
             raise ValueError
     else:
         return False
-

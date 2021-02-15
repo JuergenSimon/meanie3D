@@ -1,4 +1,4 @@
-'''
+"""
 The MIT License (MIT)
 
 (c) Juergen Simon 2014 (juergen.simon@uni-bonn.de)
@@ -20,44 +20,45 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-'''
+"""
 
 import glob
 import os
-import pprint
+# import pprint
+
 import visit
+
 import utils
 
-##
-# Plots a list of tracks from .vtk files produced by
-# meanie3D-trackstats --write-center-tracks-as-vtk.
-#
-# \param:conf Configuration dictionary
-#
-def run(conf):
 
-    pp = pprint.PrettyPrinter()
+def run(conf):
+    """
+    Plots a list of tracks from .vtk files produced by meanie3D-trackstats --write-center-tracks-as-vtk.
+    :param conf: Configuration dictionary
+    :return:
+    """
+    # pp = pprint.PrettyPrinter()
     # pp.pprint(conf)
 
     # Make sure the global configuration is in place
     utils.run_global_visit_configuration(conf)
 
-    visitConf = utils.getValueForKeyPath(conf,'postprocessing.tracks.visit')
+    visitConf = utils.getValueForKeyPath(conf, 'postprocessing.tracks.visit')
     if not visitConf:
-        print "No configuration for visuals. Nothing to do."
+        print("No configuration for visuals. Nothing to do.")
         return 0
 
     # Set up background gradient, axis labels etc.
-    utils.setAnnotations(conf,'postprocessing.tracks.visit.annotationAttributes')
+    utils.setAnnotations(conf, 'postprocessing.tracks.visit.annotationAttributes')
 
     # Set the view straight
-    utils.setView(conf,'postprocessing.tracks.visit.view')
+    utils.setView(conf, 'postprocessing.tracks.visit.view')
 
     # Plot the map data
-    utils.plotMapdata(conf,'postprocessing.tracks.visit.map')
+    utils.plotMapdata(conf, 'postprocessing.tracks.visit.map')
 
     # Plot the tracks
-    trackPlotConf = utils.getValueForKeyPath(conf,'postprocessing.tracks.visit.track')
+    trackPlotConf = utils.getValueForKeyPath(conf, 'postprocessing.tracks.visit.track')
     # pp.pprint(trackPlotConf)
 
     currentDirectory = os.path.abspath(os.getcwd())
@@ -71,12 +72,12 @@ def run(conf):
         # Plot the Tracks
         # track_pattern = conf['tracks_dir'] + "/*-track_*.vtk"
 
-        track_pattern =  "*-track_*.vtk"
-        list = sorted(glob.glob(track_pattern))
-        print "Looking with pattern " + track_pattern
-        print "Found %d track files." % len(list)
-        count = 0;
-        for trackFile in list:
+        track_pattern = "*-track_*.vtk"
+        _list = sorted(glob.glob(track_pattern))
+        print("Looking with pattern " + track_pattern)
+        print("Found %d track files." % len(_list))
+        count = 0
+        for trackFile in _list:
 
             # add plot
             # trackFile = conf['tracks_dir'] + os.path.sep + fname
@@ -87,9 +88,9 @@ def run(conf):
                 # pp.pprint(trackPlotConf)
 
             # Plot the actual track data
-            file = conf['tracks_dir'] + os.path.sep + trackFile
-            print "Adding plot for " + file
-            utils.addPseudocolorPlot(file,trackPlotConf)
+            _file = conf['tracks_dir'] + os.path.sep + trackFile
+            print("Adding plot for " + _file)
+            utils.addPseudocolorPlot(_file, trackPlotConf)
 
             count = count + 1
 
@@ -101,11 +102,11 @@ def run(conf):
         trackPlotConf['PseudocolorAttributes']['legendFlag'] = legendFlag
         # pp.pprint(trackPlotConf)
 
-    print "Drawing plots"
+    print("Drawing plots")
     visit.DrawPlots()
 
-    print "Saving image to %s" % os.getcwd()
-    utils.saveImage("tracks",0)
+    print("Saving image to %s" % os.getcwd())
+    utils.saveImage("tracks", 0)
 
     os.chdir(currentDirectory)
 

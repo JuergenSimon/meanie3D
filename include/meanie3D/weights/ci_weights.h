@@ -135,7 +135,7 @@ namespace m3D {
         vector <T> m_bandwidth;  // search radius for numerous operations
         SearchParameters *m_search_params; // search params for search
 
-#if DEBUG_CI_SCORE
+#if WRITE_CI_SCORE
         MultiArray<T> *m_score_108;
         MultiArray<T> *m_score_108_trend;
         MultiArray<T> *m_score_62_108;
@@ -599,7 +599,7 @@ namespace m3D {
         void
         calculate_weight_function(FeatureSpace <T> *fs) {
 
-#if DEBUG_CI_SCORE
+#if WRITE_CI_SCORE
             vector<size_t> dims = m_coordinate_system->get_dimension_sizes();
             m_score_108 = new MultiArrayBlitz<T>(dims, 1000);
             m_score_108_trend = new MultiArrayBlitz<T>(dims, 1000);
@@ -618,7 +618,7 @@ namespace m3D {
                 }
             }
 
-#if DEBUG_CI_SCORE
+#if WRITE_CI_SCORE
 #if WITH_VTK
 
             boost::filesystem::path ppath(m_data_store->filename());
@@ -719,7 +719,7 @@ namespace m3D {
             T ir_108_radiance = this->m_data_store->get(msevi_l15_ir_108, g, isInRange, isValid);
             T ir_108_temp = brightness_temperature(msevi_l15_ir_108, ir_108_radiance);
 
-#if DEBUG_CI_SCORE
+#if WRITE_CI_SCORE
             m_score_108->set(g, ir_108_temp);
 #endif
 
@@ -740,7 +740,7 @@ namespace m3D {
             // IR 0.65 - IR 10.7
             T delta_wv_062_ir_108 = wv_062_temp - ir_108_temp;
 
-#if DEBUG_CI_SCORE
+#if WRITE_CI_SCORE
             m_score_62_108->set(g, delta_wv_062_ir_108);
 #endif
 
@@ -755,7 +755,7 @@ namespace m3D {
             // IR 13.3 - IR 10.7
             T delta_ir_134_ir_108 = ir_134_temp - ir_108_temp;
 
-#if DEBUG_CI_SCORE
+#if WRITE_CI_SCORE
             m_score_134_108->set(g, delta_ir_134_ir_108);
 #endif
 
@@ -804,7 +804,7 @@ namespace m3D {
                     if (dT3 >= 1.0) score++;
                 }
 
-#if DEBUG_CI_SCORE
+#if WRITE_CI_SCORE
                 m_score_108_trend->set(g, dT1);
                 m_62_108_trend->set(g, dT2);
                 m_134_108_trend->set(g, dT3);

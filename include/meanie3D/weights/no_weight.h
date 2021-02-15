@@ -21,37 +21,33 @@
  * SOFTWARE.
  */
 
-#ifndef M3D_WEIGHTFUNCTION_H
-#define M3D_WEIGHTFUNCTION_H
+#ifndef M3D_NOWEIGHTFUNCTION_H
+#define M3D_NOWEIGHTFUNCTION_H
 
 #include <meanie3D/defines.h>
 #include <meanie3D/namespaces.h>
+#include <meanie3D/weights/weight_function.h>
 
-#include <meanie3D/featurespace/point.h>
+namespace m3D {
 
-namespace m3D
-{
-
-    /** Weight function interface. The weight function plays an important
-     * role in the mean-shift algorithm. It replaces density as criterion
-     * in places, where the actual spatial density is homogenous, as is
-     * often the case in scientific, gridded data sets.
+    /** 
+     * This weight function always returns 1: 
+     * 
+     *              f(x) = 1
+     * 
+     * Use this weight function to switch off weights. 
      */
-    template <typename T>
-    class WeightFunction
+    template<class T>
+    class NoWeightFunction : public WeightFunction<T>
     {
     public:
-        /** 
-         * Weight at given point in feature-space 
-         * @param point object
-         * @return weight
-         */
-        virtual T operator()(const typename Point<T>::ptr p) const = 0;
-
-        virtual ~WeightFunction()
-        {
+        NoWeightFunction() {}
+        ~NoWeightFunction() {}
+    public:
+        T operator()(const typename Point<T>::ptr p) const {
+            return (T) 1.0;
         }
     };
-} // namespace m3D
+}
 
 #endif

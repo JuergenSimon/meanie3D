@@ -1,7 +1,12 @@
 .idea
 .vscode
-CMakeFiles
+build
 cmake-build-debug
+CMakeFiles
+gtest-*
+html
+m3D-test-*
+nbproject*
+radolan2netcdf
 Makefile.docker
 cmake_install.cmake
-html

@@ -1,0 +1,59 @@
+# Docker repository
+repository=iontichy
+work_dir=.
+
+# Core 
+image=meanie3d
+version=0.1.0
+tag="${repository}/${image}:${version}"
+latest="${repository}/${image}:latest"
+
+docker:
+	docker build --tag ${tag} -f Dockerfile ${work_dir}
+	docker tag ${tag} ${latest}
+.PHONY: image
+
+docker-nocache:
+	docker build --no-cache --tag ${tag} -f Dockerfile ${work_dir}
+	docker tag ${tag} ${latest}
+.PHONY: image-nocache
+
+push:
+	docker push ${tag}
+	docker push ${latest}
+.PHONY: push
+
+# With VTK
+imageVtk=meanie3d-vtk
+versionVtk=0.1.0
+tagVtk="${repository}/${imageVtk}:${versionVtk}"
+latestVtk="${repository}/${imageVtk}:latest"
+
+docker-vtk:
+	docker build --tag ${tagVtk} -f Dockerfile.vtk ${work_dir}
+	docker tag ${tagVtk} ${latestVtk}
+.PHONY: image-vtk
+
+docker-nocache-vtk:
+	docker build --no-cache --tag ${tagVtk} -f Dockerfile.vtk ${work_dir}
+	docker tag ${tagVtk} ${latestVtk}
+.PHONY: image-nocache-vtk
+
+push-vtk:
+	docker push ${tagVtk}
+	docker push ${latestVtk}
+.PHONY: push-vtk
+
+# General targets
+
+clean: 
+	docker images | grep meanie3d | awk '{print $3}' | xargs docker rmi -f &&\
+	docker images | grep none | awk '{print $3}' | xargs docker rmi -f &&\
+	docker system prune -f
+.PHONY: clean
+
+all: docker push docker-vtk push-vtk
+.PHONY: all
+
+
+

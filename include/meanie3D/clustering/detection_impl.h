@@ -303,7 +303,7 @@ namespace m3D {
             ctx.sf->apply(ctx.fs);
 
 #if WRITE_FEATURESPACE
-            std::string fn = path.stem().string() + "_scale_" + boost::lexical_cast<string>(scale) + ".vtk";
+            std::string fn = path.stem().string() + "_scale_" + boost::lexical_cast<string>(params.scale) + ".vtk";
             VisitUtils<T>::write_featurespace_vtk(fn, ctx.fs);
 #endif
         }
@@ -407,8 +407,7 @@ namespace m3D {
         ctx.clusters->highest_uuid = uuid;
 
         // Collate with previous clusters, if provided
-        if (params.previous_clusters_filename != NULL
-            && params.postprocess_with_previous_output) {
+        if (params.postprocess_with_previous_output && params.previous_clusters_filename != NULL) {
             cout << endl << "Collating with previous results:" << endl;
             if (params.verbosity >= VerbosityDetails)
                 ctx.clusters->print();

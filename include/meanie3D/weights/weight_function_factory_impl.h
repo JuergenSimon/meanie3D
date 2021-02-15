@@ -30,6 +30,8 @@
 #include "default_weights.h"
 #include "inverse_default.h"
 #include "exp10_weight.h"
+#include "inv_erfc_weight.h"
+#include "no_weight.h"
 
 #include "weight_function_factory.h"
 
@@ -48,15 +50,31 @@ namespace m3D {
 
         WeightFunction<T> *weight_function = NULL;
 
-        if (params.weight_function_name == "oase-ci") {
+        if (params.weight_function_name == "oase-ci") 
+        {
             weight_function = new OASECIWeightFunction<T>(params, ctx);
-        } else if (params.weight_function_name == "oase") {
+        } 
+        else if (params.weight_function_name == "oase") 
+        {
             weight_function = new OASEWeightFunction<T>(params, ctx);
-        } else if (params.weight_function_name == "inverse") {
+        } 
+        else if (params.weight_function_name == "inverse") 
+        {
             weight_function = new InverseDefaultWeightFunction<T>(params, ctx);
-        } else if (params.weight_function_name == "pow10") {
+        } 
+        else if (params.weight_function_name == "pow10") {
             weight_function = new EXP10WeightFunction<T>(params, ctx);
-        } else {
+        }
+        else if (params.weight_function_name == "inverfc")
+        {
+            weight_function = new InvErfcWeightFunction<T>(params, ctx);
+        }
+        else if (params.weight_function_name == "none") 
+        {
+            weight_function = new NoWeightFunction<T>();
+        }
+        else
+        {
             weight_function = new DefaultWeightFunction<T>(params, ctx);
         }
 

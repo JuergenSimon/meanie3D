@@ -25,6 +25,7 @@
 #define M3D_REFLECTIVITYCONVECTIONFILTER_H
 
 #include <meanie3D/defines.h>
+#include <meanie3D/featurespace.h>
 #include <meanie3D/namespaces.h>
 
 #include <vector>
@@ -44,7 +45,7 @@ namespace m3D {
     {
     private:
 
-        vector <T> m_bandwidth;
+        std::vector <T> m_bandwidth;
         size_t m_index_of_z;
         T m_convective_threshold;
         T m_critical_delta_z;

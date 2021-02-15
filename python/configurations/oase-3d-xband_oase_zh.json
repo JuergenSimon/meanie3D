@@ -563,14 +563,14 @@
           "LabelAttributes": {
             "legendFlag": 0,
             "restrictNumberOfLabels": 0,
-            "specifyTextColor1": 0,
-            "textColor1": [
+
+            "textFont1.color": [
               255,
               0,
               0,
               0
             ],
-            "textHeight1": 0.02,
+            "textFont1.scale": 0.02,
             "formatTemplate": "%g",
             "horizontalJustification": "Left",
             "verticalJustification": "Bottom"

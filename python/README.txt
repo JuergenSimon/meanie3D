@@ -1,9 +1,9 @@
 
 Project Name: meanie3D-python
-Version: 1.6.0
+Version: 1.6.1
 Url: http://git.meteo.uni-bonn.de/projects/meanie3d
 Author: Juergen Simon
-Email: juergen.simon@uni-bonn.de
+Email: tachyonimpulse@gmail.com
 License: MIT License
 
 #----------------------------------------------------------------------------#

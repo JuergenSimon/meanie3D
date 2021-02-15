@@ -18,9 +18,9 @@ GET_DIRECTORY_PROPERTY(PROJECT_URL DIRECTORY .. DEFINITION PROJECT_URL)
 GET_DIRECTORY_PROPERTY(PROJECT_LICENSE DIRECTORY .. DEFINITION PROJECT_LICENSE)
 
 # Python
-FIND_PACKAGE(PythonInterp REQUIRED)
-IF (PYTHONINTERP_FOUND)
-    MESSAGE(STATUS "Found Python interpreter (${PYTHON_VERSION_STRING}) ${PYTHON_EXECUTABLE}")
+FIND_PACKAGE (Python2 COMPONENTS Interpreter)
+IF (Python2_FOUND)
+    MESSAGE(STATUS "Found Python interpreter (${Python2_VERSION}) ${Python2_EXECUTABLE}")
 ELSE ()
     MESSAGE(FATAL_ERROR "python not found")
 ENDIF ()
@@ -28,11 +28,11 @@ ENDIF ()
 # ------------------------------------------------------------- #
 # Python packaging
 # ------------------------------------------------------------- #
-IF (PYTHONINTERP_FOUND)
+IF (Python2_FOUND)
 
     # Use the system's python path to append it to visit's python
     # path to enable importing modules to visit's python.
-    EXECUTE_PROCESS(COMMAND python -c "import sys; sys.stdout.write(':'.join(sys.path))" OUTPUT_VARIABLE SYSTEM_PYTHON_PATH)
+    EXECUTE_PROCESS(COMMAND ${Python2_EXECUTABLE} -c "import sys; sys.stdout.write(':'.join(sys.path))" OUTPUT_VARIABLE SYSTEM_PYTHON_PATH)
 
     # Configure package file
     FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/meanie3D DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -48,9 +48,8 @@ IF (PYTHONINTERP_FOUND)
     ADD_CUSTOM_TARGET(copy-python-files ALL
             COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/meanie3D ${CMAKE_CURRENT_BINARY_DIR}
             DEPENDS meanie3D)
-    ADD_CUSTOM_TARGET(${PROJECT_NAME} ALL COMMAND ${PYTHON_EXECUTABLE} setup.py build)
+    ADD_CUSTOM_TARGET(${PROJECT_NAME} ALL COMMAND ${Python2_EXECUTABLE} setup.py build)
     ADD_CUSTOM_TARGET(${PROJECT_NAME}-clean COMMAND rm -rf build dist *.egg-info setup.py meanie3D/__init__.py README.txt)
-
-    INSTALL(CODE "EXECUTE_PROCESS(COMMAND \"${PYTHON_EXECUTABLE}\" setup.py install WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})")
-
+    ADD_CUSTOM_TARGET(${PROJECT_NAME}-uninstall COMMAND ${Python2_EXECUTABLE} -m pip uninstall meanie3D)
+    INSTALL(CODE "EXECUTE_PROCESS(COMMAND \"${Python2_EXECUTABLE}\" setup.py install WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})")
 ENDIF ()

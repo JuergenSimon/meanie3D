@@ -21,13 +21,14 @@
  * SOFTWARE.
  */
 
-#ifndef M3D_DEFAULTWEIGHTFUNCTION_H
-#define M3D_DEFAULTWEIGHTFUNCTION_H
+#ifndef M3D_INVERFCWEIGHTFUNCTION_H
+#define M3D_INVERFCWEIGHTFUNCTION_H
 
 #include <meanie3D/defines.h>
 #include <meanie3D/namespaces.h>
 #include <meanie3D/utils.h>
 #include <meanie3D/weights/weight_function.h>
+#include <meanie3D/clustering/detection.h>
 
 #include <netcdf>
 #include <vector>
@@ -36,17 +37,22 @@
 namespace m3D {
 
     /** 
-     * Linear weight function:
+     * This weight function scales from [0 .. 1] following the inverse
+     * complementary gaussian error function:
      * 
-     * f(x) = x
+     *              f(x) = 1-erfc(2x)
      * 
-     * For each value range, the range of x is projected from 0..1 as
-     * the variable's value moves from it's min to it's max value.
-     * The actual value is the arithmetic mean of all variable weights.
+     * The curve has a strong effect in the beginning and levels out 
+     * quickly at 1. This weight function can be used to help sharpen
+     * the boundaries in objects that are in close proximity. 
      * 
+     * The weight is calculated by iterating over all variables. For each 
+     * variable a weight is generated that varies from [0..1] as the variable 
+     * goes from it's valid_min to valid_max (linear). The values are summed 
+     * up and divided by the number of variables. 
      */
     template<class T>
-    class DefaultWeightFunction : public WeightFunction<T>
+    class InvErfcWeightFunction : public WeightFunction<T>
     {
     private:
 
@@ -62,9 +68,10 @@ namespace m3D {
          * @param map of lower bounds
          * @param map of upper bounds
          */
-        DefaultWeightFunction(const detection_params_t <T> &params,
-                              const detection_context_t <T> &ctx)
-                : m_weight(new MultiArrayBlitz<T>(ctx.coord_system->get_dimension_sizes(), 0.0)) {
+        InvErfcWeightFunction(const detection_params_t<T> &params,
+                                                const detection_context_t<T> &ctx)
+            : m_weight(new MultiArrayBlitz<T>(ctx.coord_system->get_dimension_sizes(), 0.0))
+        {
             // If scale-space filter is present, use the filtered
             // limits. If not, use the original limits
             if (ctx.sf == NULL) {
@@ -80,7 +87,8 @@ namespace m3D {
             calculate_weight_function(ctx.fs);
         }
 
-        ~DefaultWeightFunction() {
+        ~InvErfcWeightFunction()
+        {
             if (this->m_weight != NULL) {
                 delete m_weight;
                 m_weight = NULL;
@@ -91,29 +99,21 @@ namespace m3D {
 
         void
         calculate_weight_function(const FeatureSpace <T> *fs) {
-            //            #if WITH_OPENMP
-            //            #pragma omp parallel for 
-            //            #endif
+#if WITH_OPENMP
+#pragma omp parallel for 
+#endif
             for (size_t i = 0; i < fs->points.size(); i++) {
                 Point<T> *p = fs->points[i];
-
-                T saliency = (fs->off_limits()->get(p->gridpoint))
-                             ? 0.0 : compute_weight(fs, p->values);
-
-                //                #if WITH_OPENMP
-                //                #pragma omp critical 
-                //                #endif
+                T saliency = (fs->off_limits()->get(p->gridpoint)) ? 0.0 : compute_weight(fs, p->values);
                 m_weight->set(p->gridpoint, saliency);
             }
         };
 
-        /** Actual weight computation happens here
-         */
+        /* Actual weight computation happens here */
 
-        T compute_weight(const FeatureSpace <T> *fs,
-                         const vector <T> &values) const {
+        T compute_weight(const FeatureSpace <T> *fs, const vector <T> &values) const 
+        {
             T sum = 0.0;
-
             for (size_t var_index = 0; var_index < fs->value_rank(); var_index++) {
                 T value = values.at(fs->spatial_rank() + var_index);
 
@@ -123,8 +123,8 @@ namespace m3D {
                 T var_weight = (value - min) / (max - min);
                 sum += var_weight;
             }
-
-            return sum / ((T) fs->value_rank());
+            T x = sum / ((T)fs->value_rank());
+            return 1 - erfc(2*x);
         }
 
     public:

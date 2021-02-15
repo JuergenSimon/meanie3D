@@ -33,29 +33,21 @@
 
 #include <vector>
 
-namespace m3D {
+namespace m3D
+{
 
 #if WRITE_MODES
     static size_t s_pass_counter = 0;
 
-    template <typename T>
-    size_t
-    ClusterOperation<T>::pass_counter()
-    {
+    template <typename T> size_t ClusterOperation<T>::pass_counter() {
         return s_pass_counter;
     };
 
-    template <typename T>
-    void
-    ClusterOperation<T>::reset_pass_counter()
-    {
+    template <typename T> void ClusterOperation<T>::reset_pass_counter() {
         s_pass_counter = 0;
     };
 
-    template <typename T>
-    void
-    ClusterOperation<T>::increment_pass_counter()
-    {
+    template <typename T> void ClusterOperation<T>::increment_pass_counter() {
         s_pass_counter++;
     }
 #endif
@@ -63,26 +55,23 @@ namespace m3D {
 #pragma mark -
 #pragma mark Clustering Code
 
-    template<typename T>
-    ClusterList<T> *
-    ClusterOperation<T>::cluster() {
+    template <typename T> ClusterList<T>* ClusterOperation<T>::cluster() {
         using namespace m3D::utils::vectors;
-
         const CoordinateSystem<T> *cs = m_context.coord_system;
         vector<T> resolution;
         if (m_context.search_params->search_type() == SearchTypeRange) {
-            RangeSearchParams<T> *p = (RangeSearchParams<T> *) m_context.search_params;
+            RangeSearchParams<T> *p = (RangeSearchParams<T> *)m_context.search_params;
             // Physical grid resolution in the
             // spatial range
             resolution = cs->resolution();
-            resolution = ((T) 4.0) * resolution;
+            resolution = ((T)4.0) * resolution;
             // Supplement with bandwidth values for
             // the value range
             for (size_t i = resolution.size(); i < p->bandwidth.size(); i++) {
                 resolution.push_back(p->bandwidth[i]);
             }
         } else {
-            KNNSearchParams<T> *p = (KNNSearchParams<T> *) m_context.search_params;
+            KNNSearchParams<T> *p = (KNNSearchParams<T> *)m_context.search_params;
             resolution = p->resolution;
         }
 
@@ -94,11 +83,11 @@ namespace m3D {
 
         // Create an empty cluster list
         ClusterList<T> *cluster_list = new ClusterList<T>(
-                m_params.filename,
-                m_params.variables,
-                m_params.dimensions,
-                m_params.dimension_variables,
-                m_params.time_index);
+            m_params.filename,
+            m_params.variables,
+            m_params.dimensions,
+            m_params.dimension_variables,
+            m_params.time_index);
 
         // Guard against empty feature-space
         if (this->feature_space->points.size() == 0) {
@@ -106,7 +95,7 @@ namespace m3D {
             return cluster_list;
         }
 
-        MeanshiftOperation <T> meanshiftOperator(this->feature_space, this->point_index);
+        MeanshiftOperation<T> meanshiftOperator(this->feature_space, this->point_index);
         meanshiftOperator.prime_index(m_context.search_params);
 
 #if WITH_OPENMP
@@ -122,6 +111,13 @@ namespace m3D {
 
             // Get the meanshift vector for this point
             typename Point<T>::ptr x = this->feature_space->points[index];
+
+            // If the weight function indicates no significant response, skip
+            // this point
+            // TODO: what happened to this code?
+
+
+            // Calculate the mean shift vector
             x->shift = meanshiftOperator.meanshift(x->values,
                                                    m_context.search_params,
                                                    m_context.kernel,
@@ -140,10 +136,10 @@ namespace m3D {
 
         // Analyse the graph and create clusters
         cluster_list->aggregate_cluster_graph(
-                this->feature_space,
-                m_context.weight_function,
-                m_params.coalesceWithStrongestNeighbour,
-                m_context.show_progress);
+            this->feature_space,
+            m_context.weight_function,
+            m_params.coalesceWithStrongestNeighbour,
+            m_context.show_progress);
 
         // Provide fresh ids right away
         m3D::uuid_t uuid = 0;
@@ -151,13 +147,13 @@ namespace m3D {
         m3D::id_t id = 0;
         ClusterUtils<T>::provideIds(cluster_list, id);
 
-//        cout << "Cluster list after aggregation:" << endl;
-//        cluster_list.print();
+        //        cout << "Cluster list after aggregation:" << endl;
+        //        cluster_list.print();
 
         // Replace points with original data ()
         ClusterUtils<T>::replace_points_from_datastore(cluster_list, m_context.data_store);
-//        cout << "Cluster list after filtering points:" << endl;
-//        cluster_list.print();
+        //        cout << "Cluster list after filtering points:" << endl;
+        //        cluster_list.print();
 
         // Find margin points (#325)
         ClusterUtils<T>::obtain_margin_flag(cluster_list, this->feature_space);
@@ -170,16 +166,19 @@ namespace m3D {
 #if WITH_VTK
         size_t min_size = std::numeric_limits<size_t>::max();
         size_t max_size = std::numeric_limits<size_t>::min();
-        for (size_t i = 0; i < cluster_list.size(); i++) {
-            if (cluster_list[i]->size() < min_size) {
+        for (size_t i = 0; i < cluster_list.size(); i++)
+        {
+            if (cluster_list[i]->size() < min_size)
+            {
                 min_size = cluster_list[i]->size();
             }
-            if (cluster_list[i]->size() > max_size) {
+            if (cluster_list[i]->size() > max_size)
+            {
                 max_size = cluster_list[i]->size();
             }
         }
 
-        NetCDFDataStore<T> *ds = (NetCDFDataStore<T> *) this->feature_space->data_store();
+        NetCDFDataStore<T> *ds = (NetCDFDataStore<T> *)this->feature_space->data_store();
         std::string fn = ds->filename() + "-modes-" + boost::lexical_cast<string>(pass_counter()) + ".vtk";
         VisitUtils<T>::write_cluster_modes_vtk(fn, cluster_list.clusters);
 
@@ -190,6 +189,6 @@ namespace m3D {
 #endif
         return cluster_list;
     }
-}
+} // namespace m3D
 
 #endif

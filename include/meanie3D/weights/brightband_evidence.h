@@ -55,9 +55,7 @@ namespace m3D {
         calculate_weight_function(FeatureSpace <T> *fs) {
             for (size_t i = 0; i < fs->points.size(); i++) {
                 Point<T> *p = fs->points[i];
-
                 T saliency = this->compute_weight(p);
-
                 m_weight->set(p->gridpoint, saliency);
             }
         };

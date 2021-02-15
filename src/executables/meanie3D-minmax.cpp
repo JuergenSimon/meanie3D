@@ -40,6 +40,7 @@ using namespace m3D::utils;
 /** Feature-space data type 
  */
 typedef double T;
+typedef unsigned char Byte;
 
 /** Filename formats 
  */
@@ -98,79 +99,54 @@ void get_limits(NcVar variable, T& min, T& max)
 {
     min = std::numeric_limits<T>::max();
     max = std::numeric_limits<T>::min();
-
     T fill_value = 0.0;
-
     bool have_fill_value = false;
-
-    try
-    {
+    try {
         NcVarAtt fillValue = variable.getAtt("_FillValue");
-
-        if (!fillValue.isNull())
-        {
+        if (!fillValue.isNull()) {
             fillValue.getValues(&fill_value);
-
             have_fill_value = true;
         }
-    } catch (::netCDF::exceptions::NcException &e)
-    {
+    } catch (::netCDF::exceptions::NcException &e) {
+      std::cerr << e.what() << std::endl;
     }
-
     T *values = NULL;
     size_t numElements = 0;
-
-    if (variable.getDimCount() == 1)
-    {
+    if (variable.getDimCount() == 1) {
         // 1D
-
         numElements = variable.getDim(0).getSize();
         values = allocate<T>(numElements);
         variable.getVar(values);
-    }
-    
-    else if (variable.getDimCount() == 2)
-    {
+    } else if (variable.getDimCount() == 2) {
         // 2D
-
         size_t N = variable.getDim(0).getSize();
         size_t M = variable.getDim(1).getSize();
         numElements = N * M;
-
         values = allocate<T>(numElements);
         variable.getVar(values);
-
-    } else if (variable.getDimCount() == 3)
-    {
+    } else if (variable.getDimCount() == 3) {
         // 3D
-
         size_t N = variable.getDim(0).getSize();
         size_t M = variable.getDim(1).getSize();
         size_t K = variable.getDim(2).getSize();
         numElements = N * M * K;
-
         values = allocate<T>(numElements);
-
         vector<size_t> count(3, 1);
         count[0] = 1;
         count[1] = M;
         count[2] = K;
-
         vector<size_t> start(3, 0);
         start[0] = 0;
         start[1] = 0;
         start[2] = 0;
-
         variable.getVar(start, count, values);
-    } else
-    {
+    } else {
         cerr << "ERROR:Variables with " << variable.getDimCount()
                 << " dimensions are not currently handled" << endl;
         return;
     }
 
-    for (size_t j = 0; j < numElements; j++)
-    {
+    for (size_t j = 0; j < numElements; j++) {
         T value = values[j];
         if (have_fill_value && value == fill_value) continue;
         if (value < min)

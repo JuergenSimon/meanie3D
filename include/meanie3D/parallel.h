@@ -21,8 +21,8 @@
  * SOFTWARE.
  */
 
-#ifndef M3D_PARALL_H
-#define    M3D_PARALL_H
+#ifndef M3D_PARALLEL_H
+#define M3D_PARALLEL_H
 
 #if WITH_OPENMP
 #include <omp.h>

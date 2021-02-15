@@ -38,11 +38,11 @@ typedef double FS_TYPE;
 static const double NO_SCALE = numeric_limits<double>::min();
 
 void parse_commmandline(program_options::variables_map vm,
-        NcFile **filePtr,
-        string &source_filename,
-        string &root_directory,
-        vector<NcDim> &dimensions,
-        vector<NcVar> &dimension_variables)
+                        NcFile **filePtr,
+                        string &source_filename,
+                        string &root_directory,
+                        vector<NcDim> &dimensions,
+                        vector<NcVar> &dimension_variables)
 {
     // Version
 
@@ -65,7 +65,8 @@ void parse_commmandline(program_options::variables_map vm,
     try
     {
         root_directory = vm["root"].as<string>();
-    } catch (const boost::exception& e)
+    }
+    catch (const boost::exception &e)
     {
         cerr << "Missing 'root' argument" << endl;
 
@@ -80,7 +81,8 @@ void parse_commmandline(program_options::variables_map vm,
     try
     {
         file = new NcFile(source_filename, NcFile::read);
-    } catch (const netCDF::exceptions::NcException &e)
+    }
+    catch (const netCDF::exceptions::NcException &e)
     {
         cerr << "ERROR opening file '" << source_filename << "' : " << e.what() << endl;
         exit(EXIT_FAILURE);
@@ -108,7 +110,7 @@ void parse_commmandline(program_options::variables_map vm,
 
     for (tokenizer::iterator tok_iter = dim_tokens.begin(); tok_iter != dim_tokens.end(); ++tok_iter)
     {
-        const char* name = (*tok_iter).c_str();
+        const char *name = (*tok_iter).c_str();
 
         dimensions.push_back(file->getDim(name));
 
@@ -116,20 +118,14 @@ void parse_commmandline(program_options::variables_map vm,
     }
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     using namespace m3D;
 
     // Declare the supported options.
 
     program_options::options_description desc("Options");
-    desc.add_options()
-            ("help", "produce this help message")
-            ("version", "print version information and exit")
-            ("source", program_options::value<string>(), "File to use as a template")
-            ("root", program_options::value<string>()->default_value("."), "Root directory to recursively iterate over files and replace the dimensions and vars in all \"*-clusters.nc\" files")
-            ("dimensions", program_options::value<string>(), "Comma-separatred list of the dimensions to be used. The program expects dimension variables with identical names.")
-            ;
+    desc.add_options()("help", "produce this help message")("version", "print version information and exit")("source", program_options::value<string>(), "File to use as a template")("root", program_options::value<string>()->default_value("."), "Root directory to recursively iterate over files and replace the dimensions and vars in all \"*-clusters.nc\" files")("dimensions", program_options::value<string>(), "Comma-separatred list of the dimensions to be used. The program expects dimension variables with identical names.");
 
     program_options::variables_map vm;
 
@@ -137,7 +133,8 @@ int main(int argc, char** argv)
     {
         program_options::store(program_options::parse_command_line(argc, argv, desc), vm);
         program_options::notify(vm);
-    } catch (std::exception &e)
+    }
+    catch (std::exception &e)
     {
         cerr << "Error parsing command line: " << e.what() << endl;
         cerr << "Check meanie3D-trackplot --help for command line options" << endl;
@@ -167,7 +164,8 @@ int main(int argc, char** argv)
     try
     {
         parse_commmandline(vm, &source, source_filename, root_directory, dimensions, dimension_variables);
-    } catch (const std::exception &e)
+    }
+    catch (const std::exception &e)
     {
         cerr << e.what() << endl;
         exit(EXIT_FAILURE);
@@ -185,9 +183,7 @@ int main(int argc, char** argv)
         {
             fs::path f = dir_iter->path();
 
-            if (fs::is_regular_file(f)
-                    && boost::algorithm::ends_with(f.filename().generic_string(), "-clusters.nc")
-                    && f.generic_string() != source_filename)
+            if (fs::is_regular_file(f) && boost::algorithm::ends_with(f.filename().generic_string(), "-clusters.nc") && f.generic_string() != source_filename)
             {
                 try
                 {
@@ -220,7 +216,7 @@ int main(int argc, char** argv)
 
                     multimap<string, NcGroupAtt> attributes = original.getAtts();
 
-                    multimap<string, NcGroupAtt >::iterator at;
+                    multimap<string, NcGroupAtt>::iterator at;
 
                     for (at = attributes.begin(); at != attributes.end(); at++)
                     {
@@ -228,7 +224,7 @@ int main(int argc, char** argv)
 
                         size_t size = a.getAttLength();
 
-                        void *data = (void *) malloc(size);
+                        void *data = (void *)malloc(size);
 
                         a.getValues(data);
 
@@ -285,7 +281,7 @@ int main(int argc, char** argv)
 
                         // read data
 
-                        FS_TYPE *var_data = (FS_TYPE*) malloc(sizeof (FS_TYPE) * size);
+                        FS_TYPE *var_data = (FS_TYPE *)malloc(sizeof(FS_TYPE) * size);
 
                         original_var.getVar(var_data);
 
@@ -297,9 +293,9 @@ int main(int argc, char** argv)
 
                         // copy attributes
 
-                        map< string, NcVarAtt > attributes = original_var.getAtts();
+                        map<string, NcVarAtt> attributes = original_var.getAtts();
 
-                        map< string, NcVarAtt >::iterator at;
+                        map<string, NcVarAtt>::iterator at;
 
                         for (at = attributes.begin(); at != attributes.end(); at++)
                         {
@@ -307,7 +303,7 @@ int main(int argc, char** argv)
 
                             size_t size = a.getAttLength();
 
-                            void *attr_data = (void *) malloc(size);
+                            void *attr_data = (void *)malloc(size);
 
                             a.getValues(attr_data);
 
@@ -318,7 +314,8 @@ int main(int argc, char** argv)
                     }
 
                     cout << " done." << endl;
-                } catch (const netCDF::exceptions::NcException &e)
+                }
+                catch (const netCDF::exceptions::NcException &e)
                 {
                     cerr << "ERROR opening file '" << f.generic_string() << "' : " << e.what() << endl;
                     exit(EXIT_FAILURE);

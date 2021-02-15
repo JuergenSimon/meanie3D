@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-'''
+"""
 The MIT License (MIT)
 
 (c) Juergen Simon 2014 (juergen.simon@uni-bonn.de)
@@ -22,7 +22,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-'''
+"""
 
 __author__ = "Juergen Simon"
 __email__ = "juergen.simon@uni-bonn.de"
@@ -34,19 +34,18 @@ __version__ = "1.5.4"
 # produced by meanie3D-trackstats --write-center-tracks-as-vtk
 
 # Parameters
-_NETCDF_DIR     = "P_NETCDF_DIR"
-_CLUSTER_DIR    = "P_CLUSTER_DIR"
-_M3D_HOME       = "P_M3D_HOME"
-_RESUME         = "P_RESUME"
-_CONFIG_FILE    = "P_CONFIGURATION_FILE"
-_USES_TIME      = P_USES_TIME
-_START_TIME     = "P_START_TIME_INDEX"
-_END_TIME       = "P_END_TIME_INDEX"
+_NETCDF_DIR = "P_NETCDF_DIR"
+_CLUSTER_DIR = "P_CLUSTER_DIR"
+_M3D_HOME = "P_M3D_HOME"
+_RESUME = "P_RESUME"
+_CONFIG_FILE = "P_CONFIGURATION_FILE"
+_USES_TIME = P_USES_TIME
+_START_TIME = "P_START_TIME_INDEX"
+_END_TIME = "P_END_TIME_INDEX"
 
 # Import modules
 import sys
 sys.path.append(_M3D_HOME)
-import meanie3D.app.utils
 import meanie3D.visualisation.clusters
 
 # Parse configuration data
@@ -64,5 +63,5 @@ configuration['end_time_index'] = _END_TIME
 
 # run it
 # pdb.set_trace()
-meanie3D.visualisation.clusters.run(configuration)
+meanie3D.visualisation.clusters.run(configuration, print_conf=True)
 quit()

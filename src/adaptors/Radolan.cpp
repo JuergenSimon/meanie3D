@@ -1,4 +1,3 @@
-
 #include <meanie3D/adaptors.h>
 #include <meanie3D/exceptions.h>
 
@@ -27,7 +26,7 @@ namespace m3D {
             const RDDataType *threshold,
             netCDF::NcFile::FileMode mode,
             bool omitOutside)
-    throw (CFFileConversionException)
+    throw (m3D::CFFileConversionException)
     {
         if (mode == netCDF::NcFile::read)
         {
@@ -74,13 +73,13 @@ namespace m3D {
      * @return NCFile* NetCDF-Filehandler
      * @throw CFFileConversionException
      */
-    NcFile * CFConvertRadolanScan(RDScan *scan,
-            const char* netcdfPath,
-            bool write_one_bytes_as_byte,
-            const RDDataType *threshold,
-            NcFile::FileMode mode)
+    NcFile *CFConvertRadolanScan(RDScan *scan,
+                                 const char *netcdfPath,
+                                 bool write_one_bytes_as_byte,
+                                 const RDDataType *threshold,
+                                 NcFile::FileMode mode)
 
-    throw (CFFileConversionException)
+        throw(m3D::CFFileConversionException)
     {
         using namespace netCDF;
         using namespace std;

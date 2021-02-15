@@ -40,6 +40,18 @@ namespace m3D {
     using std::vector;
     using std::map;
 
+    /**
+     * This weight function is the inverse function to the default weight
+     * function:
+     * 
+     * f(x) = 1 - x
+     * 
+     * It varies from 1 to 0 as each variable in the value range goes from 
+     * it's minimum to it's maximum. It can be useful if the goal is to track 
+     * 'holes' rather than 'mountains'. The overall weight is again the arithmetic
+     * mean of all weights in the value range.
+     * 
+     */
     template<class T>
     class InverseDefaultWeightFunction : public WeightFunction<T>
     {
@@ -108,7 +120,7 @@ namespace m3D {
                     sum += var_weight;
                 }
             }
-            return sum;
+            return sum / num_vars;
         }
 
         T operator()(const typename Point<T>::ptr p) const {

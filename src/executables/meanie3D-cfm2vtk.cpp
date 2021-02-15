@@ -26,12 +26,13 @@
 
 using namespace boost;
 using namespace m3D;
+using namespace m3D::utils;
 using namespace m3D::utils::vectors;
 using namespace netCDF;
 using namespace std;
 
 /** Feature-space data type */
-typedef double FS_TYPE;
+#define FS_TYPE double
 
 /** Verbosity */
 typedef enum {
@@ -172,14 +173,16 @@ void convert_clusters(const string &filename,
     CoordinateSystem<FS_TYPE> *cs = NULL;
     ClusterList<FS_TYPE> *list = ClusterList<FS_TYPE>::read(filename, &cs);
 
-    //::m3D::utils::VisitUtils<FS_TYPE>::write_clusters_vtr(list, cs, list->source_file, true, false, true);
-    // ::m3D::utils::VisitUtils<FS_TYPE>::write_clusters_vtu(list, cs, list->source_file, 5, true, extract_skin, write_as_xml);
+    //VisitUtils<FS_TYPE>::write_clusters_vtr(list, cs, list->source_file, true, false, true);
+    // VisitUtils<FS_TYPE>::write_clusters_vtu(list, cs, list->source_file, 5, true, extract_skin, write_as_xml);
 
-    ::m3D::utils::VisitUtils<FS_TYPE>::write_clusters_vtu(list, cs, list->source_file, 5, true, extract_skin,
+    cout << "Writing clusters as vtk/vtu" << endl;
+    VisitUtils<FS_TYPE>::write_clusters_vtu(list, cs, list->source_file, 5, true, extract_skin,
                                                           write_as_xml);
 
     if (write_displacement_vectors) {
-        vector<vector<FS_TYPE> > origins;
+        cout << "Writing displacement vectors" << endl;
+        vector<vector<FS_TYPE>> origins;
         vector<vector<FS_TYPE> > displacements;
         for (size_t i = 0; i < list->size(); i++) {
             Cluster<FS_TYPE>::ptr c = list->clusters.at(i);
@@ -189,15 +192,17 @@ void convert_clusters(const string &filename,
             }
         }
         string displacements_path = path.filename().stem().string() + "-displacements.vtk";
-        ::m3D::utils::VisitUtils<FS_TYPE>::write_vectors_vtk(displacements_path, origins, displacements,
+        VisitUtils<FS_TYPE>::write_vectors_vtk(displacements_path, origins, displacements,
                                                              "displacement");
     }
 
     string centers_path = path.filename().stem().string() + "-centers.vtk";
-    ::m3D::utils::VisitUtils<FS_TYPE>::write_geometrical_cluster_centers_vtk(centers_path, list->clusters);
+    cout << "Writing cluster centers" << endl;
+    VisitUtils<FS_TYPE>::write_geometrical_cluster_centers_vtk(centers_path, list->clusters);
 
     delete list;
     delete cs;
+    cout << "Done." << endl;
 }
 
 void convert_composite(const string &filename,
@@ -269,12 +274,12 @@ int main(int argc, char **argv) {
             ("variable,v", program_options::value<string>(), "Name of the variable to be used")
             ("destination,d", program_options::value<string>()->default_value("."),
              "Name of output directory for the converted files (default '.')")
-            ("type,t", program_options::value<string>(), "'clusters' or 'composite'")
+            ("type,t", program_options::value<string>(), "'cluster' or 'composite'")
 #if WITH_VTK
             ("extract-skin,s", "Use delaunay filter to extract skin file")
             ("write-as-xml,x", "Write files in xml instead of ascii")
             ("write-displacement-vectors",
-             "Write out an extra file containing the displacement vectors (clusters only).")
+             "Write out an extra file containing the displacement vectors (type cluster only).")
             ("vtk-dimensions", program_options::value<string>(),
              "VTK files are written in the order of dimensions given. This may lead to wrong results if the order of the dimensions is not x,y,z. Add the comma-separated list of dimensions here, in the order you would like them to be written as (x,y,z)")
 #endif
@@ -315,6 +320,10 @@ int main(int argc, char **argv) {
     bool write_displacement_vectors = false;
     bool mind_the_time = false;
 
+    // string problemStr = "1.03964e-312";
+    // double problemChild = boost::lexical_cast<double>(problemStr);
+    // cout << problemStr << " = " << problemChild << endl;
+
     try {
         parse_commmandline(vm,
                            filename,
@@ -350,11 +359,12 @@ int main(int argc, char **argv) {
     } catch (const netCDF::exceptions::NcException &e) {
         cerr << "NetCDF exception:" << e.what() << endl;
         exit(EXIT_FAILURE);;
-    } catch (const std::exception &e) {
-        cerr << "std::exception:" << e.what() << endl;
-        cerr << e.what() << endl;
-        exit(EXIT_FAILURE);;
     }
+    // } catch (const std::exception &e) {
+    //     cerr << "std::exception:" << e.what() << endl;
+    //     cerr << e.what() << endl;
+    //     exit(EXIT_FAILURE);;
+    // }
 
     return 0;
 };

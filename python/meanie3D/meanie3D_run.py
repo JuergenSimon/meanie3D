@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-'''
+"""
 The MIT License (MIT)
 
 (c) Juergen Simon 2014 (juergen.simon@uni-bonn.de)
@@ -22,68 +22,72 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-'''
+"""
 
+import getopt
 import os
 import sys
-import getopt
 
 import meanie3D
 import meanie3D.app
 import meanie3D.app.external
+import meanie3D.app.postprocessing
 import meanie3D.app.tracking
 import meanie3D.app.utils
-import meanie3D.app.postprocessing
 
 # Make sure the C++ executables are installed
-meanie3D.app.external.locateCommands(["meanie3D-detect","meanie3D-track","meanie3D-cfm2vtk","meanie3D-trackstats","rm"])
+meanie3D.app.external.locateCommands(["meanie3D-detect", "meanie3D-track", "meanie3D-trackstats", "rm"])
 
-# ----------------------------------------------------------------------------
-## Prints usage and exits
-#
+
 def usage():
-    print "meanie3D -c=<json file> -f=<netcdf directory> [-s=<scale>] [--start=t1 --end=t2]  [--resume,-r] [--help,-h] [--version] [--time-operations]"
-    print "runs a complete set of netcdf files through the clustering/tracking"
-    print "-c : json config file specifying variables etc."
-    print "-f : directory containing the files. It is assumed that"
-    print "           the files are in the correct order when sorted alphabetically."
-    print "--scales,-s  : comma separated list of scale parameters."
-    print "--ranges,-r  : comma separated list of bandwidths, one for each spatial and value range variable."
-    print "--json-example : prints an example .json configuration and exits"
-    print "--start index of time step to start with in files with time dimension"
-    print "--end   index of time step to end at in files with time dimension"
-    print "--resume     : if this flag is present, the algorithm assumes to resume"
-    print "              operations where it last left off. If not present, previous"
-    print "              results will be erased before starting"
-    print "--help, -h  : print this message and exit."
-    print "--version   : prints the version information and exits"
-    print "--time-operations: time operations and print out their elapsed time"
-    print "--skip-trackstats: skip meanie3D-trackstats, even if the configuration is present"
-    sys.exit(1)
-    return
-# ----------------------------------------------------------------------------
+    """
+    Prints usage information.
+    :return:
+    """
+    print("meanie3D -c=/path/to/json -f=/path/to/netcdf [-o /path/to/output] "
+          "[-s=<scale>] [--start=t1 --end=t2]  [--resume,-r] [--help,-h] "
+          "[--version] [--time-operations]")
+    print("runs a complete set of netcdf files through the clustering/tracking")
+    print("-c : json config file specifying variables etc.")
+    print("-f : directory containing the files. It is assumed that")
+    print("           the files are in the correct order when sorted alphabetically.")
+    print("-o : Output directory. If omitted, this is the same as the input directory")
+    print("--scales,-s  : comma separated list of scale parameters.")
+    print("--ranges,-r  : comma separated list of bandwidths, one for each spatial and value range variable.")
+    print("--json-example : prints an example .json configuration and exits")
+    print("--start index of time step to start with in files with time dimension")
+    print("--end   index of time step to end at in files with time dimension")
+    print("--resume     : if this flag is present, the algorithm assumes to resume")
+    print("              operations where it last left off. If not present, previous")
+    print("              results will be erased before starting")
+    print("--help, -h  : print this message and exit.")
+    print("--version   : prints the version information and exits")
+    print("--time-operations: time operations and print out their elapsed time")
+    print("--skip-trackstats: skip meanie3D-trackstats, even if the configuration is present")
 
-# ----------------------------------------------------------------------------
-## Prints the configuration file .json file description and exits
-#
+
 def print_configuration_format():
-    print '''{'''
-    print '''   "description" : "...",  /* Description of file content */'''
-    print '''   "data" : {...},         /* call --help config.data for help on this section */'''
-    print '''   "detection" : {...},    /* call --help config.detection for help on this section */'''
-    print '''   "tracking" : {...},     /* call --help config.tracking for help on this section */'''
-    print '''   "postprocessing" : {...} /* call --help config.postprocessing for help on this section */'''
-    print '''}'''
-    sys.exit(1)
-# ----------------------------------------------------------------------------
+    """
+    Prints the configuration file .json file description
+    :return:
+    """
+    print('{')
+    print('   "description" : "...",  /* Description of file content */')
+    print('   "data" : {...},         /* call --help config.data for help on this section */')
+    print('   "detection" : {...},    /* call --help config.detection for help on this section */')
+    print('   "tracking" : {...},     /* call --help config.tracking for help on this section */')
+    print('   "postprocessing" : {...} /* call --help config.postprocessing for help on this section */')
+    print('}')
 
-# ----------------------------------------------------------------------------
-## Prints version info and exits
-#
+
 def print_version():
-    print "meanie3D: " + meanie3D.getVersion() + "\n"
-    sys.exit(1)
-    return
+    """
+    Prints version info
+    :return:
+    """
+    print("meanie3D: " + meanie3D.getVersion() + "\n")
+
+
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
@@ -105,7 +109,7 @@ def main():
                      "scales="]
         opts, args = getopt.getopt(argv, "c:f:s:o:r:h", long_args)
     except getopt.GetoptError as detail:
-        print detail
+        print(detail)
         sys.exit(2)
 
     scales = []
@@ -118,9 +122,8 @@ def main():
     output_dir = "."
     netcdf_dir = ""
     num_params = 0
-
-    start_time_index = -1;
-    end_time_index = -1;
+    start_time_index = -1
+    end_time_index = -1
 
     for o, a in opts:
 
@@ -132,10 +135,10 @@ def main():
             netcdf_dir = a
             num_params = num_params + 1
 
-        elif o in ["--scales","-s"]:
+        elif o in ["--scales", "-s"]:
             scales = str(a).split(',')
 
-        elif o in ["--ranges","-r"]:
+        elif o in ["--ranges", "-r"]:
             ranges = a
 
         elif o == "-o":
@@ -143,6 +146,7 @@ def main():
 
         elif o in ["--json-example"]:
             print_configuration_format()
+            sys.exit(0)
 
         elif o in ["--resume"]:
             resume = True
@@ -155,10 +159,11 @@ def main():
 
         elif o in ["--help"]:
             usage()
-            sys.exit()
+            sys.exit(0)
 
         elif o in ["--version"]:
             print_version()
+            sys.exit(0)
 
         elif o in ["--time-operations"]:
             time_operations = True
@@ -174,30 +179,27 @@ def main():
 
     if num_params < 2:
         usage()
+        sys.exit(1)
 
     uses_time = False
 
     # sanity checks on time range
 
-    if start_time_index != -1 or end_time_index != -1 :
-
+    if start_time_index != -1 or end_time_index != -1:
         if (start_time_index == -1 and end_time_index != -1) or (start_time_index != -1 and end_time_index == -1):
-            print "start-time-index and end-time-index must both be set"
-            sys.exit(2)
-
+            print("start-time-index and end-time-index must both be set")
+            sys.exit(1)
         if start_time_index > end_time_index:
-            print "start-time-index is after end-time-index!"
-            sys.exit(2)
-
+            print("start-time-index is after end-time-index!")
+            sys.exit(1)
         uses_time = True
 
     # Parse configuration data and expand
+    configuration = meanie3D.app.utils.load_configuration(config_file)
 
-    configuration = meanie3D.app.utils.load_configuration(config_file);
-
-    print "-------------------------------------------------------------------------------------"
-    print "Configuration: " + configuration['description']
-    print "-------------------------------------------------------------------------------------"
+    print("-------------------------------------------------------------------------------------")
+    print("Configuration: " + configuration['description'])
+    print("-------------------------------------------------------------------------------------")
 
     # Enrich the configuration with env/command line stuff
     configuration["source_directory"] = os.path.abspath(netcdf_dir)
@@ -219,32 +221,34 @@ def main():
             return
 
     # Run the detection and tracking steps
-    detection = meanie3D.app.utils.getSafe(configuration,'detection')
-    tracking = meanie3D.app.utils.getSafe(configuration,'tracking')
-    if (detection or tracking):
+    detection = meanie3D.app.utils.getSafe(configuration, 'detection')
+    tracking = meanie3D.app.utils.getSafe(configuration, 'tracking')
+    if detection or tracking:
 
         # run the actual clustering/tracking script
         if not scales:
             if uses_time == False:
-                meanie3D.app.tracking.run(configuration,-1)
+                meanie3D.app.tracking.run(configuration, -1)
             else:
-                for time_index in range(start_time_index,end_time_index):
-                    meanie3D.app.tracking.run(configuration,time_index)
+                for time_index in range(start_time_index, end_time_index):
+                    meanie3D.app.tracking.run(configuration, time_index)
 
         else:
             for scale in scales:
                 configuration["scale"] = scale
                 if uses_time == False:
-                    meanie3D.app.tracking.run(configuration,-1)
+                    meanie3D.app.tracking.run(configuration, -1)
                 else:
-                    for time_index in range(start_time_index,end_time_index):
-                        meanie3D.app.tracking.run(configuration,time_index)
+                    for time_index in range(start_time_index, end_time_index):
+                        meanie3D.app.tracking.run(configuration, time_index)
 
     # Run the postprocessing steps
-    if (configuration['postprocessing']):
+    if 'postprocessing' in configuration:
         meanie3D.app.postprocessing.run(configuration)
 
     return
+
+
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------

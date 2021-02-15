@@ -21,7 +21,6 @@
  * SOFTWARE.
  */
 
-
 #ifndef M3D_CONRAD_CLUSTER_H
 #define M3D_CONRAD_CLUSTER_H
 

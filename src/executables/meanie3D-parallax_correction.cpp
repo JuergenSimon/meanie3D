@@ -413,7 +413,6 @@ void correct_parallax(boost::filesystem::path in_path, const ShiftedProperties s
         }
 #if WITH_VTK
 #if WRITE_PARALLAX_VECTORS
-
         string vector_path = in_path.filename().stem().string() + "-parallax.vtk";
         VisitUtils<T>::write_vectors_vtk(vector_path, origins, correction_vectors, "parallax");
 #endif
